@@ -1,0 +1,1 @@
+export { ClienteNavigator } from './ClienteNavigator';

@@ -1,0 +1,96 @@
+import { StyleSheet } from 'react-native';
+
+const PURPLE = '#3d1f6e';
+const GREEN  = '#4ade80';
+
+export const homeStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: PURPLE,
+    alignItems: 'center',
+    paddingTop: 80,
+    paddingHorizontal: 24,
+  },
+  logo: {
+    fontSize: 42,
+    color: GREEN,
+    fontStyle: 'italic',
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  subtitle: {
+    color: 'rgba(255,255,255,0.65)',
+    fontSize: 14,
+    marginBottom: 40,
+  },
+  buttonsContainer: {
+    width: '100%',
+    gap: 14,
+  },
+  cardOutline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 20,
+    padding: 18,
+    gap: 14,
+  },
+  cardGreen: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: GREEN,
+    borderRadius: 20,
+    padding: 18,
+    gap: 14,
+  },
+  iconCircleGreen: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(74,222,128,0.2)',
+    borderWidth: 1,
+    borderColor: 'rgba(74,222,128,0.4)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconCirclePurple: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(61,31,110,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  icon: {
+    width: 28,
+    height: 28,
+    borderRadius: 6,
+  },
+  cardText: { flex: 1 },
+  cardTitleLight: { color: '#fff', fontSize: 16, fontWeight: '500' },
+  cardSubLight:   { color: 'rgba(255,255,255,0.55)', fontSize: 12, marginTop: 2 },
+  cardTitleDark:  { color: PURPLE, fontSize: 16, fontWeight: '500' },
+  cardSubDark:    { color: 'rgba(61,31,110,0.6)', fontSize: 12, marginTop: 2 },
+  arrow:     { color: 'rgba(255,255,255,0.4)', fontSize: 22 },
+  arrowDark: { color: 'rgba(61,31,110,0.4)',   fontSize: 22 },
+  stepsContainer: {
+    flexDirection: 'row',
+    gap: 20,
+    marginTop: 60,
+  },
+  step:       { alignItems: 'center', gap: 8 },
+  stepCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stepNumber: { color: 'rgba(255,255,255,0.6)', fontWeight: '500' },
+  stepLabel:  { color: 'rgba(255,255,255,0.4)', fontSize: 10, textAlign: 'center' },
+});
