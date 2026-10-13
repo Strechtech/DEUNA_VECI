@@ -1,78 +1,91 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
-const MENU = [
-  { icon: 'person-outline',      label: 'Mis datos' },
-  { icon: 'lock-closed-outline', label: 'Seguridad' },
-  { icon: 'card-outline',        label: 'Métodos de pago' },
-  { icon: 'help-circle-outline', label: 'Ayuda y soporte' },
-  { icon: 'log-out-outline',     label: 'Cerrar sesión', danger: true },
-];
+export const Perfil = ({ navigation }) => {
+  const switchProfile = () => navigation.getParent()?.getParent()?.navigate('HomeScreen');
 
-export const Perfil = () => {
   return (
     <View style={styles.root}>
       <StatusBar barStyle="light-content" />
-
-      <LinearGradient colors={['#3A0F9E', '#6C3CE1']} style={styles.header}>
-        <View style={styles.avatarBig}>
-          <Ionicons name="person" size={40} color="#6C3CE1" />
+      <LinearGradient colors={['#351078', '#5F14CC']} style={styles.header}>
+        <Text style={styles.eyebrow}>DEUNA! · MI BARRIO</Text>
+        <View style={styles.avatar}>
+          <Ionicons name="person" size={36} color="#5F14CC" />
         </View>
         <Text style={styles.name}>Karina López</Text>
         <Text style={styles.email}>karina@email.com</Text>
         <View style={styles.levelPill}>
-          <Ionicons name="trophy" size={14} color="#F59E0B" />
-          <Text style={styles.levelText}>Nivel Gold</Text>
+          <Ionicons name="trophy" size={14} color="#F8C65A" />
+          <Text style={styles.levelText}>Cliente Mi Veci</Text>
         </View>
       </LinearGradient>
 
-      <View style={styles.menu}>
-        {MENU.map((item, i) => (
-          <TouchableOpacity key={i} style={styles.menuItem}>
-            <View style={[styles.menuIcon, item.danger && styles.menuIconDanger]}>
-              <Ionicons
-                name={item.icon} size={20}
-                color={item.danger ? '#EF4444' : '#6C3CE1'}
-              />
+      <View style={styles.content}>
+        <View style={styles.infoCard}>
+          <View style={styles.infoRow}>
+            <Ionicons name="person-outline" size={19} color="#5F14CC" />
+            <View style={styles.infoCopy}>
+              <Text style={styles.infoLabel}>Nombre</Text>
+              <Text style={styles.infoValue}>Karina López</Text>
             </View>
-            <Text style={[styles.menuLabel, item.danger && styles.menuLabelDanger]}>
-              {item.label}
-            </Text>
-            {!item.danger && <Ionicons name="chevron-forward" size={18} color="#ccc" />}
-          </TouchableOpacity>
-        ))}
+          </View>
+          <View style={styles.divider} />
+          <View style={styles.infoRow}>
+            <Ionicons name="mail-outline" size={19} color="#5F14CC" />
+            <View style={styles.infoCopy}>
+              <Text style={styles.infoLabel}>Correo</Text>
+              <Text style={styles.infoValue}>karina@email.com</Text>
+            </View>
+          </View>
+        </View>
+
+        <TouchableOpacity
+          accessibilityRole="button"
+          style={styles.switchButton}
+          activeOpacity={0.85}
+          onPress={switchProfile}
+        >
+          <Ionicons name="swap-horizontal-outline" size={20} color="#5F14CC" />
+          <Text style={styles.switchText}>Cambiar tipo de usuario</Text>
+          <Ionicons name="chevron-forward" size={18} color="#91899D" />
+        </TouchableOpacity>
+        <Text style={styles.disclaimer}>
+          Perfil de demostración. La edición de datos y configuración todavía no están disponibles.
+        </Text>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#F9F7FF' },
-
-  header: { paddingTop: 54, paddingBottom: 30, alignItems: 'center' },
-  avatarBig: {
-    width: 80, height: 80, borderRadius: 40,
-    backgroundColor: '#E8E0FF', alignItems: 'center', justifyContent: 'center', marginBottom: 12,
+  root: { flex: 1, backgroundColor: '#F7F5FA' },
+  header: { paddingTop: 55, paddingBottom: 30, alignItems: 'center' },
+  eyebrow: { color: '#C8B1F2', fontSize: 10, fontWeight: '700', letterSpacing: 1.2, marginBottom: 19 },
+  avatar: {
+    width: 76, height: 76, borderRadius: 38,
+    backgroundColor: '#F0E9FC', alignItems: 'center', justifyContent: 'center', marginBottom: 11,
   },
   name: { color: '#fff', fontSize: 20, fontWeight: '700' },
-  email: { color: 'rgba(255,255,255,0.7)', fontSize: 13, marginTop: 4 },
+  email: { color: '#D8C8F5', fontSize: 13, marginTop: 4 },
   levelPill: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
-    backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 20,
-    paddingHorizontal: 14, paddingVertical: 5, marginTop: 12,
+    backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 20,
+    paddingHorizontal: 13, paddingVertical: 6, marginTop: 13,
   },
   levelText: { color: '#fff', fontSize: 12, fontWeight: '600' },
-
-  menu: { paddingHorizontal: 16, marginTop: 20, gap: 8 },
-  menuItem: {
+  content: { padding: 18 },
+  infoCard: { backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 15 },
+  infoRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 16 },
+  infoCopy: { marginLeft: 12 },
+  infoLabel: { color: '#827C8A', fontSize: 11 },
+  infoValue: { color: '#26212F', fontSize: 14, fontWeight: '600', marginTop: 3 },
+  divider: { height: 1, backgroundColor: '#F0EDF3' },
+  switchButton: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    backgroundColor: '#fff', borderRadius: 14, padding: 16,
-    elevation: 1, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05,
+    backgroundColor: '#fff', borderRadius: 15, padding: 15, marginTop: 12,
   },
-  menuIcon: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#EDE9FF', alignItems: 'center', justifyContent: 'center' },
-  menuIconDanger: { backgroundColor: '#FEE2E2' },
-  menuLabel: { flex: 1, fontSize: 14, fontWeight: '500', color: '#1E1B4B' },
-  menuLabelDanger: { color: '#EF4444' },
+  switchText: { flex: 1, color: '#26212F', fontSize: 14, fontWeight: '600' },
+  disclaimer: { color: '#827C8A', fontSize: 11, lineHeight: 17, marginHorizontal: 3, marginTop: 16 },
 });

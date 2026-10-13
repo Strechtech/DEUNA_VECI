@@ -12,8 +12,8 @@ const OFFERS = [
     tag: 'MULTI-PACK',
     tagColor: colorsApp.purple,
     title: '5% cashback hora valle → tope $1.00',
-    SelectedIcon: 'MaterialCommunityIcons',
-    name: 'broom',
+    SelectedIcon: 'Ionicons',
+    name: 'brush-outline',
     iconBg: '#EDE7F6',
     borderColor: colorsApp.purple,
   },
@@ -22,7 +22,7 @@ const OFFERS = [
     tag: 'CASHBACK',
     tagColor: '#00897B',
     title: '3% próxima visita → tope $1.00',
-    SelectedIcon: 'MaterialCommunityIcons',
+    SelectedIcon: 'Ionicons',
     name: 'wallet-outline',
     iconBg: '#E0F2F1',
     borderColor: '#00897B',
@@ -79,7 +79,7 @@ export const EditPromotionStoreScreen = ({ navigation }) => {
           <View style={editPromotionStoreStyles.autoPromoSection}>
             <View style={editPromotionStoreStyles.autoPromoImgWrap}>
               <View style={editPromotionStoreStyles.autoPromoImg}>
-                <MyIcon SelectedIcon="MaterialCommunityIcons" name="cellphone" color={colorsApp.white} size={40} />
+                <MyIcon SelectedIcon="Ionicons" name="phone-portrait-outline" color={colorsApp.white} size={40} />
               </View>
               <View style={editPromotionStoreStyles.checkCircle}>
                 <MyIcon SelectedIcon="Feather" name="check" color={colorsApp.white} size={12} />

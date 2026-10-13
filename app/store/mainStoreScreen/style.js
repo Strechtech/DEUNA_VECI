@@ -1,8 +1,7 @@
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 const PURPLE      = '#5B2D8E';
 const PURPLE_DARK = '#3d1f6e';
-const PURPLE_CARD = '#7B3FB5';
 const TEAL        = '#2DD4BF';
 const BG          = '#F3F0F8';
 const WHITE       = '#FFFFFF';
@@ -17,16 +16,20 @@ export const storeStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingTop: 52,
-    paddingBottom: 14,
+    paddingTop: 18,
+    paddingBottom: 16,
   },
   headerLeft:  { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  avatar:      { width: 38, height: 38, borderRadius: 19, backgroundColor: '#ccc' },
+  avatar:      { width: 40, height: 40, borderRadius: 14, backgroundColor: '#EDE7F6', alignItems: 'center', justifyContent: 'center' },
+  headerEyebrow: { fontSize: 9, fontWeight: '700', color: '#888', letterSpacing: 1 },
   headerTitle: { fontSize: 18, fontWeight: '700', color: PURPLE },
+  openStatus: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 7, borderRadius: 16, backgroundColor: '#E8F5EE' },
+  openStatusDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: '#258761' },
+  openStatusText: { fontSize: 10, fontWeight: '700', color: '#24734F' },
   bellBtn:     { padding: 6 },
   bellIcon:    { fontSize: 20 },
  
-  scroll: { paddingHorizontal: 16 },
+  scroll: { paddingHorizontal: 16, paddingBottom: 108 },
  
   // Balance card
   balanceCard: {
@@ -34,11 +37,12 @@ export const storeStyles = StyleSheet.create({
     borderRadius: 20,
     padding: 24,
     marginTop: 16,
-    marginBottom: 20,
+    marginBottom: 16,
   },
   balanceLabel:    { color: 'rgba(255,255,255,0.7)', fontSize: 11, letterSpacing: 1.2, marginBottom: 6 },
   balanceAmount:   { color: WHITE, fontSize: 38, fontWeight: '700' },
   balanceCurrency: { fontSize: 18, fontWeight: '400' },
+  balanceNote: { color: 'rgba(255,255,255,0.68)', fontSize: 11, marginTop: 3 },
   rechargeBtn: {
     backgroundColor: TEAL,
     alignSelf: 'flex-start',
@@ -53,11 +57,11 @@ export const storeStyles = StyleSheet.create({
   actionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 24,
+    justifyContent: 'space-between',
+    marginBottom: 22,
   },
   actionItem: {
-    width: '22%',
+    width: '31.5%',
     alignItems: 'center',
     position: 'relative',
     paddingTop: 4,
@@ -80,14 +84,14 @@ export const storeStyles = StyleSheet.create({
     backgroundColor: WHITE,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 6,
+    marginBottom: 8,
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 4,
     elevation: 2,
   },
   actionIcon:  { fontSize: 22 },
-  actionLabel: { fontSize: 10, color: '#444', textAlign: 'center', lineHeight: 13 },
+  actionLabel: { fontSize: 11, color: '#444', textAlign: 'center', lineHeight: 15, fontWeight: '600' },
  
   // Section header
   sectionHeader: {
@@ -99,6 +103,39 @@ export const storeStyles = StyleSheet.create({
   sectionTitle: { fontSize: 18, fontWeight: '700', color: '#1a1a1a' },
   sectionSub:   { fontSize: 12, color: '#888', marginTop: 2 },
   sectionLink:  { fontSize: 13, color: PURPLE, fontWeight: '600' },
+  cashbackShopCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: WHITE,
+    borderRadius: 15,
+    padding: 12,
+    marginBottom: 9,
+  },
+  cashbackShopIcon: { width: 42, height: 42, borderRadius: 13, alignItems: 'center', justifyContent: 'center', marginRight: 11 },
+  cashbackShopCopy: { flex: 1 },
+  cashbackShopTitleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 6 },
+  cashbackShopName: { color: '#26212F', fontSize: 12, fontWeight: '700', flex: 1 },
+  cashbackState: { borderRadius: 12, paddingHorizontal: 8, paddingVertical: 4 },
+  cashbackStateOn: { backgroundColor: '#E8F5EE' },
+  cashbackStateOff: { backgroundColor: '#F0EDF2' },
+  cashbackStateText: { fontSize: 9, fontWeight: '700' },
+  cashbackStateTextOn: { color: '#24734F' },
+  cashbackStateTextOff: { color: '#746B7A' },
+  cashbackShopDetail: { color: '#827C8A', fontSize: 10, marginTop: 5 },
+  cashbackError: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#FFF0F1', padding: 13, borderRadius: 12, marginBottom: 12 },
+  cashbackErrorText: { color: '#8C3442', fontSize: 11, flex: 1 },
+  resultsCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: WHITE,
+    borderRadius: 15,
+    paddingVertical: 16,
+    marginBottom: 18,
+  },
+  resultItem: { flex: 1, alignItems: 'center', paddingHorizontal: 4 },
+  resultValue: { color: PURPLE, fontSize: 19, fontWeight: '700' },
+  resultLabel: { color: '#827C8A', fontSize: 9, textAlign: 'center', marginTop: 4 },
+  resultDivider: { width: 1, height: 32, backgroundColor: '#E9E4EE' },
  
   // Promos
   promoScroll: { marginBottom: 28 },
@@ -166,12 +203,17 @@ export const storeStyles = StyleSheet.create({
     right: 0,
     backgroundColor: WHITE,
     flexDirection: 'row',
-    paddingBottom: 24,
-    paddingTop: 10,
+    paddingBottom: 18,
+    paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: '#eee',
+    elevation: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 7,
   },
-  navItem: { flex: 1, alignItems: 'center', position: 'relative' },
+  navItem: { flex: 1, alignItems: 'center', position: 'relative', gap: 3 },
   navActiveIndicator: {
     position: 'absolute',
     top: -10,
@@ -182,6 +224,6 @@ export const storeStyles = StyleSheet.create({
   },
   navIcon:        { fontSize: 20, marginBottom: 3 },
   navIconActive:  {},
-  navLabel:       { fontSize: 10, color: '#aaa' },
+  navLabel:       { fontSize: 9, color: '#aaa' },
   navLabelActive: { color: PURPLE, fontWeight: '600' },
 });

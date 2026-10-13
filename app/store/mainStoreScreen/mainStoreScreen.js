@@ -1,155 +1,243 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button, Image, Text, View, TouchableOpacity , ScrollView } from 'react-native';
+import { Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { ViewScreen } from '../../standars/viewScreen';
 import { MyIcon } from '../../standars/Icon';
 import { colorsApp } from '../../../assets/data/constants';
 import { storeStyles } from './style';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { SHOPS, useRewards } from '../../cliente/rewards/RewardsContext';
 
 const ACTIONS = [
-  { SelectedIcon: 'Feather',      name: 'send',          label: 'Transferir' },
-  { SelectedIcon: 'Feather',      name: 'battery-charging', label: 'Recargar' },
-  { SelectedIcon: 'MaterialIcons',name: 'credit-card',   label: 'Cobrar'},
-  { SelectedIcon: 'Entypo',       name: 'bar-graph',     label: 'Estadísictas' , isNew: true , screen:'statisticsStoreScreen' },
-  { SelectedIcon: 'Feather',      name: 'gift',          label: 'Invita y\nGana' },
-  { SelectedIcon: 'MaterialIcons',name: 'train',         label: 'Metro de\nQuito' },
-  { SelectedIcon: 'Feather',      name: 'check-circle',  label: 'Verificar\npago' },
-  { SelectedIcon: 'MaterialIcons',name: 'storefront',    label: 'Mi Veci\nPromo', isNew: true , screen:'promotionStoreScreen' },
+  { SelectedIcon: 'MaterialIcons', name: 'credit-card', label: 'Cobrar QR', screen: 'MerchantQrScreen' },
+  { SelectedIcon: 'Entypo', name: 'bar-graph', label: 'Estadísticas', screen: 'statisticsStoreScreen' },
+  { SelectedIcon: 'Feather', name: 'gift', label: 'Promociones', screen: 'promotionStoreScreen' },
 ];
-
-const PROMOS = [
-  {
-    title: 'Noche de Sushi',
-    desc: 'Aplica en locales seleccionados pagando con Ethereal.',
-    discount: '30% OFF',
-    expires: 'Termina en 2 días',
-    bg: '#1a0a2e',
-  },
-  {
-    title: 'Super Fresh',
-    desc: 'Recarga con código y obtén descuento en tu compra.',
-    discount: 'CA...',
-    expires: '⭐ Favorito',
-    bg: '#0f3d1a',
-  },
-];
-
-const ACTIVITY = [
-  { icon: '🛍', name: 'Tienda Mango',  sub: 'Hoy, 10:45 AM',   amount: '-$45.00', neg: true },
-  { icon: '↙', name: 'De: Maria Lopez', sub: 'Ayer, 08:20 PM', amount: '+$12.50', neg: false },
-];
- 
-
 
 export const StoreScreen = ({ navigation }) => {
+  const { promotions, progress, cashbackOffers, ready, loadError } = useRewards();
+  const activePromotions = SHOPS.filter((shop) => promotions[shop.id].active).length;
+  const activeCashbackOffers = cashbackOffers.filter((offer) => offer.active).length;
+  const totalPurchases = SHOPS.reduce((total, shop) => total + progress[shop.id].total, 0);
+  const totalRewards = SHOPS.reduce((total, shop) => total + progress[shop.id].rewards, 0);
+
+  const openRoute = (route) => navigation.navigate(route);
+
   return (
     <ViewScreen>
-        <View style={storeStyles.root}>
-            <StatusBar style="light" />
-
-            {/* Header */}
-            <View style={storeStyles.header}>
-            <View style={storeStyles.headerLeft}>
-                <View style={storeStyles.avatar} />
-                <Text style={storeStyles.headerTitle}>Ethereal Ledger</Text>
+      <View style={storeStyles.root}>
+        <StatusBar style="dark" />
+        <View style={storeStyles.header}>
+          <View style={storeStyles.headerLeft}>
+            <View style={storeStyles.avatar}>
+              <Ionicons name="storefront-outline" size={21} color={colorsApp.purple} />
             </View>
-            <TouchableOpacity style={storeStyles.bellBtn}>
-                <Text style={storeStyles.bellIcon}>🔔</Text>
-            </TouchableOpacity>
+            <View>
+              <Text style={storeStyles.headerEyebrow}>PANEL DEL LOCAL</Text>
+              <Text style={storeStyles.headerTitle}>Mi negocio</Text>
             </View>
-
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={storeStyles.scroll}>
-
-            {/* Balance card */}
-            <View style={storeStyles.balanceCard}>
-                <Text style={storeStyles.balanceLabel}>SALDO DISPONIBLE</Text>
-                <Text style={storeStyles.balanceAmount}>$22.62 <Text style={storeStyles.balanceCurrency}>USD</Text></Text>
-                <TouchableOpacity style={storeStyles.rechargeBtn}>
-                <Text style={storeStyles.rechargeBtnText}>＋  Recargar</Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* Quick actions grid */}
-            <View style={storeStyles.actionsGrid}>
-                {ACTIONS.map((a, i) => (
-                <TouchableOpacity key={i} style={storeStyles.actionItem} onPress={() => a.isNew && navigation.navigate(a.screen)}>
-                    {a.isNew && <View style={storeStyles.newBadge}><Text style={storeStyles.newBadgeText}>NUEVO</Text></View>}
-                    <View style={storeStyles.actionIconWrap}>
-                        <MyIcon {...{SelectedIcon:a.SelectedIcon,  name:a.name, color:colorsApp.purpleIcon, size:30}}/>
-                    </View>
-                    <Text style={storeStyles.actionLabel}>{a.label}</Text>
-                </TouchableOpacity>
-                ))}
-            </View>
-
-            {/* Promociones */}
-            <View style={storeStyles.sectionHeader}>
-                <View>
-                <Text style={storeStyles.sectionTitle}>Mis promociones</Text>
-                <Text style={storeStyles.sectionSub}>Descuentos exclusivos para ti</Text>
-                </View>
-                <TouchableOpacity><Text style={storeStyles.sectionLink}>Ver todas</Text></TouchableOpacity>
-            </View>
-
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={storeStyles.promoScroll}>
-                {PROMOS.map((p, i) => (
-                <View key={i} style={[storeStyles.promoCard, { backgroundColor: p.bg }]}>
-                    <View style={storeStyles.discountBadge}>
-                    <Text style={storeStyles.discountText}>{p.discount}</Text>
-                    </View>
-                    <View style={storeStyles.promoInfo}>
-                    <Text style={storeStyles.promoTitle}>{p.title}</Text>
-                    <Text style={storeStyles.promoDesc}>{p.desc}</Text>
-                    <View style={storeStyles.promoExpiry}>
-                        <Text style={storeStyles.promoExpiryText}>🕐 {p.expires}</Text>
-                    </View>
-                    </View>
-                </View>
-                ))}
-            </ScrollView>
-
-            {/* Actividad reciente */}
-            <View style={storeStyles.sectionHeader}>
-                <Text style={storeStyles.sectionTitle}>Actividad reciente</Text>
-                <TouchableOpacity><Text style={storeStyles.sectionLink}>Ver historial</Text></TouchableOpacity>
-            </View>
-
-            <View style={storeStyles.activityList}>
-                {ACTIVITY.map((a, i) => (
-                <View key={i} style={storeStyles.activityItem}>
-                    <View style={[storeStyles.activityIcon, { backgroundColor: a.neg ? '#e8f5e9' : '#ede7f6' }]}>
-                    <Text style={storeStyles.activityIconText}>{a.icon}</Text>
-                    </View>
-                    <View style={storeStyles.activityInfo}>
-                    <Text style={storeStyles.activityName}>{a.name}</Text>
-                    <Text style={storeStyles.activitySub}>{a.sub}</Text>
-                    </View>
-                    <Text style={[storeStyles.activityAmount, { color: a.neg ? '#e53935' : '#43a047' }]}>
-                    {a.amount}
-                    </Text>
-                </View>
-                ))}
-            </View>
-
-            <View style={{ height: 100 }} />
-            </ScrollView>
-
-            {/* Bottom nav */}
-            <View style={storeStyles.bottomNav}>
-            {[
-                { icon: '🏠', label: 'Home',    active: true },
-                { icon: '🏷',  label: 'Promos',  active: false },
-                { icon: '⊞',  label: 'Scan',    active: false },
-                { icon: '👛', label: 'Wallet',  active: false },
-                { icon: '👤', label: 'Profile', active: false },
-            ].map((item, i) => (
-                <TouchableOpacity key={i} style={storeStyles.navItem}>
-                {item.active && <View style={storeStyles.navActiveIndicator} />}
-                <Text style={[storeStyles.navIcon, item.active && storeStyles.navIconActive]}>{item.icon}</Text>
-                <Text style={[storeStyles.navLabel, item.active && storeStyles.navLabelActive]}>{item.label}</Text>
-                </TouchableOpacity>
-            ))}
-            </View>
+          </View>
+          <View style={storeStyles.openStatus}>
+            <View style={storeStyles.openStatusDot} />
+            <Text style={storeStyles.openStatusText}>Mi Veci</Text>
+          </View>
         </View>
+
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={storeStyles.scroll}
+        >
+          <View style={storeStyles.balanceCard}>
+            <Text style={storeStyles.balanceLabel}>SALDO DISPONIBLE</Text>
+            <Text style={storeStyles.balanceAmount}>$22.62 <Text style={storeStyles.balanceCurrency}>USD</Text></Text>
+            <Text style={storeStyles.balanceNote}>Saldo de demostración</Text>
+          </View>
+
+          <View style={storeStyles.actionsGrid}>
+            {ACTIONS.map((action) => (
+              <TouchableOpacity
+                key={action.screen}
+                accessibilityRole="button"
+                style={storeStyles.actionItem}
+                onPress={() => openRoute(action.screen)}
+              >
+                <View style={storeStyles.actionIconWrap}>
+                  <MyIcon
+                    SelectedIcon={action.SelectedIcon}
+                    name={action.name}
+                    color={colorsApp.purpleIcon}
+                    size={25}
+                  />
+                </View>
+                <Text style={storeStyles.actionLabel}>{action.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <View style={storeStyles.sectionHeader}>
+            <View>
+              <Text style={storeStyles.sectionTitle}>Ofertas para tus clientes</Text>
+              <Text style={storeStyles.sectionSub}>Cashback de ejemplo · {ready ? activeCashbackOffers : '—'} activas</Text>
+            </View>
+            <TouchableOpacity
+              accessibilityRole="button"
+              onPress={() => openRoute('promotionStoreScreen')}
+            >
+              <Text style={storeStyles.sectionLink}>Gestionar</Text>
+            </TouchableOpacity>
+          </View>
+
+          {loadError ? (
+            <View style={storeStyles.cashbackError}>
+              <Ionicons name="alert-circle-outline" size={20} color="#A63B4C" />
+              <Text style={storeStyles.cashbackErrorText}>{loadError}</Text>
+            </View>
+          ) : cashbackOffers.map((offer) => {
+            const shop = SHOPS.find((item) => item.id === offer.shopId);
+            return (
+              <TouchableOpacity
+                key={offer.id}
+                accessibilityRole="button"
+                accessibilityLabel={`Editar oferta ${offer.title}`}
+                style={storeStyles.cashbackShopCard}
+                onPress={() => openRoute('promotionStoreScreen')}
+              >
+                <View style={[storeStyles.cashbackShopIcon, { backgroundColor: `${shop.color}1A` }]}>
+                  <Ionicons name="pricetag-outline" size={20} color={shop.color} />
+                </View>
+                <View style={storeStyles.cashbackShopCopy}>
+                  <View style={storeStyles.cashbackShopTitleRow}>
+                    <Text style={storeStyles.cashbackShopName}>{offer.title}</Text>
+                    <View style={[
+                      storeStyles.cashbackState,
+                      offer.active ? storeStyles.cashbackStateOn : storeStyles.cashbackStateOff,
+                    ]}>
+                      <Text style={[
+                        storeStyles.cashbackStateText,
+                        offer.active ? storeStyles.cashbackStateTextOn : storeStyles.cashbackStateTextOff,
+                      ]}>
+                        {offer.active ? 'Activa' : 'Pausada'}
+                      </Text>
+                    </View>
+                  </View>
+                  <Text style={storeStyles.cashbackShopDetail}>
+                    {shop.name} · {offer.percent}% cashback · demostración
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color="#91899D" />
+              </TouchableOpacity>
+            );
+          })}
+
+          <View style={storeStyles.sectionHeader}>
+            <View>
+              <Text style={storeStyles.sectionTitle}>Metas de fidelidad</Text>
+              <Text style={storeStyles.sectionSub}>Compras y premios por local</Text>
+            </View>
+            <TouchableOpacity
+              accessibilityRole="button"
+              onPress={() => openRoute('promotionStoreScreen')}
+            >
+              <Text style={storeStyles.sectionLink}>Gestionar</Text>
+            </TouchableOpacity>
+          </View>
+
+          {loadError ? null : SHOPS.map((shop) => {
+            const promotion = promotions[shop.id];
+            const shopProgress = progress[shop.id];
+            return (
+              <TouchableOpacity
+                key={shop.id}
+                accessibilityRole="button"
+                accessibilityLabel={`Gestionar cashback de ${shop.name}`}
+                style={storeStyles.cashbackShopCard}
+                onPress={() => openRoute('promotionStoreScreen')}
+              >
+                <View style={[storeStyles.cashbackShopIcon, { backgroundColor: `${shop.color}1A` }]}>
+                  <Ionicons name={shop.icon} size={22} color={shop.color} />
+                </View>
+                <View style={storeStyles.cashbackShopCopy}>
+                  <View style={storeStyles.cashbackShopTitleRow}>
+                    <Text style={storeStyles.cashbackShopName}>{shop.name}</Text>
+                    <View style={[
+                      storeStyles.cashbackState,
+                      promotion.active ? storeStyles.cashbackStateOn : storeStyles.cashbackStateOff,
+                    ]}>
+                      <Text style={[
+                        storeStyles.cashbackStateText,
+                        promotion.active ? storeStyles.cashbackStateTextOn : storeStyles.cashbackStateTextOff,
+                      ]}>
+                        {promotion.active ? 'Activa' : 'Pausada'}
+                      </Text>
+                    </View>
+                  </View>
+                  <Text style={storeStyles.cashbackShopDetail}>
+                    {promotion.active
+                      ? `${promotion.reward} · ${shopProgress.current}/${promotion.goal} compras`
+                      : 'Activa la promoción para sumar compras'}
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color="#91899D" />
+              </TouchableOpacity>
+            );
+          })}
+
+          <View style={storeStyles.sectionHeader}>
+            <View>
+              <Text style={storeStyles.sectionTitle}>Resultados</Text>
+              <Text style={storeStyles.sectionSub}>Actividad de Mi Veci</Text>
+            </View>
+            <TouchableOpacity
+              accessibilityRole="button"
+              onPress={() => openRoute('statisticsStoreScreen')}
+            >
+              <Text style={storeStyles.sectionLink}>Ver más</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={storeStyles.resultsCard}>
+            <View style={storeStyles.resultItem}>
+              <Text style={storeStyles.resultValue}>{ready ? totalPurchases : '—'}</Text>
+              <Text style={storeStyles.resultLabel}>Compras registradas</Text>
+            </View>
+            <View style={storeStyles.resultDivider} />
+            <View style={storeStyles.resultItem}>
+              <Text style={storeStyles.resultValue}>{ready ? totalRewards : '—'}</Text>
+              <Text style={storeStyles.resultLabel}>Premios entregados</Text>
+            </View>
+            <View style={storeStyles.resultDivider} />
+            <View style={storeStyles.resultItem}>
+              <Text style={storeStyles.resultValue}>{ready ? `${activePromotions}/${SHOPS.length}` : '—'}</Text>
+              <Text style={storeStyles.resultLabel}>Metas activas</Text>
+            </View>
+          </View>
+        </ScrollView>
+
+        <View style={storeStyles.bottomNav}>
+          {[
+            { icon: 'home-outline', label: 'Inicio', route: 'MainScreen', active: true },
+            { icon: 'gift-outline', label: 'Promociones', route: 'promotionStoreScreen' },
+            { icon: 'qr-code-outline', label: 'Cobrar', route: 'MerchantQrScreen' },
+            { icon: 'bar-chart-outline', label: 'Resultados', route: 'statisticsStoreScreen' },
+          ].map((item) => (
+            <TouchableOpacity
+              key={item.route}
+              accessibilityRole="button"
+              accessibilityState={{ selected: Boolean(item.active) }}
+              style={storeStyles.navItem}
+              onPress={() => openRoute(item.route)}
+            >
+              {item.active && <View style={storeStyles.navActiveIndicator} />}
+              <Ionicons
+                name={item.icon}
+                size={20}
+                color={item.active ? colorsApp.purple : '#999'}
+              />
+              <Text style={[storeStyles.navLabel, item.active && storeStyles.navLabelActive]}>
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
     </ViewScreen>
   );
 };

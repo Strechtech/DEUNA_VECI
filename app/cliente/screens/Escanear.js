@@ -1,143 +1,149 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity,
-  StatusBar, Animated,
+  ActivityIndicator, StatusBar, StyleSheet, Text, TouchableOpacity, View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { SHOPS } from '../rewards/RewardsContext';
+
+let cameraModule;
+
+const getCameraModule = () => {
+  if (!cameraModule) {
+    cameraModule = require('expo-camera');
+  }
+  return cameraModule;
+};
 
 export const Escanear = ({ navigation }) => {
-  const scanLine = useRef(new Animated.Value(0)).current;
+  const { CameraView, useCameraPermissions } = getCameraModule();
+  const [permission, requestPermission] = useCameraPermissions();
+  const [scanError, setScanError] = useState('');
+  const scanned = useRef(false);
+  const errorTimeout = useRef(null);
 
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(scanLine, { toValue: 1, duration: 1800, useNativeDriver: true }),
-        Animated.timing(scanLine, { toValue: 0, duration: 1800, useNativeDriver: true }),
-      ])
-    ).start();
+  useEffect(() => () => {
+    if (errorTimeout.current) clearTimeout(errorTimeout.current);
   }, []);
 
-  const scanLineTranslate = scanLine.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-100, 100],
-  });
+  const handleBarcodeScanned = ({ data }) => {
+    if (scanned.current) return;
+    const shop = SHOPS.find((item) => item.qrValue === data.trim());
+    if (!shop) {
+      scanned.current = true;
+      setScanError('Este QR no pertenece a un comercio Mi Veci.');
+      errorTimeout.current = setTimeout(() => {
+        scanned.current = false;
+        setScanError('');
+      }, 2200);
+      return;
+    }
+    scanned.current = true;
+    navigation.navigate('CodigoPago', { shopId: shop.id });
+  };
+
+  if (!permission) {
+    return (
+      <View style={styles.permissionState}>
+        <ActivityIndicator color="#5F14CC" />
+        <Text style={styles.permissionText}>Preparando la cámara…</Text>
+      </View>
+    );
+  }
+
+  if (!permission.granted) {
+    return (
+      <View style={styles.permissionState}>
+        <View style={styles.permissionIcon}>
+          <Ionicons name="camera-outline" size={34} color="#5F14CC" />
+        </View>
+        <Text style={styles.permissionTitle}>Escanea el QR del local</Text>
+        <Text style={styles.permissionText}>
+          Necesitamos acceso a la cámara para leer el código Mi Veci del comercio.
+        </Text>
+        <TouchableOpacity
+          accessibilityRole="button"
+          style={styles.permissionButton}
+          onPress={requestPermission}
+        >
+          <Text style={styles.permissionButtonText}>Permitir cámara</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.root}>
       <StatusBar barStyle="light-content" />
-
-      {/* TOP BAR */}
-      <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.topTitle}>Escanear QR</Text>
-        <TouchableOpacity style={styles.backBtn}>
-          <Ionicons name="flashlight-outline" size={22} color="#fff" />
-        </TouchableOpacity>
-      </View>
-
-      {/* CÁMARA SIMULADA */}
-      <View style={styles.cameraArea}>
-
-        {/* OVERLAY OSCURO SUPERIOR */}
-        <View style={[styles.overlay, { top: 0 }]} />
-
-        {/* MARCO QR */}
-        <View style={styles.qrFrame}>
-          {/* Esquinas */}
-          <View style={[styles.corner, styles.cornerTL]} />
-          <View style={[styles.corner, styles.cornerTR]} />
-          <View style={[styles.corner, styles.cornerBL]} />
-          <View style={[styles.corner, styles.cornerBR]} />
-
-          {/* Línea de escaneo animada */}
-          <Animated.View
-            style={[styles.scanLine, { transform: [{ translateY: scanLineTranslate }] }]}
-          />
+      <CameraView
+        style={styles.camera}
+        facing="back"
+        barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+        onBarcodeScanned={handleBarcodeScanned}
+      >
+        <View style={styles.topBar}>
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Volver al inicio"
+            style={styles.backButton}
+            onPress={() => navigation.navigate('Inicio')}
+          >
+            <Ionicons name="chevron-back" size={24} color="#fff" />
+          </TouchableOpacity>
+          <Text style={styles.topTitle}>Escanea el QR del local</Text>
+          <View style={styles.backButton} />
         </View>
 
-        {/* OVERLAY OSCURO INFERIOR */}
-        <View style={[styles.overlay, { bottom: 0 }]} />
-      </View>
+        <View style={styles.scanArea}>
+          <View style={styles.frame}>
+            <View style={[styles.corner, styles.topLeft]} />
+            <View style={[styles.corner, styles.topRight]} />
+            <View style={[styles.corner, styles.bottomLeft]} />
+            <View style={[styles.corner, styles.bottomRight]} />
+            <Ionicons name="qr-code-outline" size={118} color="rgba(255,255,255,0.48)" />
+          </View>
+          <Text style={styles.hint}>Centra el código dentro del marco</Text>
+          {scanError ? <Text style={styles.error}>{scanError}</Text> : null}
+        </View>
 
-      {/* BOTTOM SECTION */}
-      <View style={styles.bottom}>
-        <Text style={styles.hint}>
-          Escanea un QR de una! para hacer{'\n'}pagos, retiros o verificaciones
-        </Text>
-
-        <TouchableOpacity
-          style={styles.codeBtn}
-          onPress={() => navigation.navigate('CodigoPago')}
-        >
-          <Ionicons name="keypad" size={18} color="#fff" style={{ marginRight: 8 }} />
-          <Text style={styles.codeBtnText}>Código único de pago</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.bottomNote}>
+          <Ionicons name="information-circle-outline" size={18} color="#E4D6FF" />
+          <Text style={styles.bottomNoteText}>
+            Escanea el QR Mi Veci que muestra el comercio. Pago de demostración, sin cargos reales.
+          </Text>
+        </View>
+      </CameraView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#000' },
-
+  root: { flex: 1, backgroundColor: '#100C16' },
+  camera: { flex: 1 },
   topBar: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingTop: 54, paddingHorizontal: 16, paddingBottom: 12,
-    zIndex: 10,
+    paddingTop: 54, paddingHorizontal: 14, paddingBottom: 12,
+    backgroundColor: 'rgba(16,12,22,0.55)',
   },
-  backBtn: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center' },
-  topTitle: { color: '#fff', fontSize: 17, fontWeight: '600' },
-
-  /* cámara */
-  cameraArea: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-
-  overlay: {
-    position: 'absolute', left: 0, right: 0, height: '25%',
-    backgroundColor: 'rgba(0,0,0,0.6)',
-  },
-
-  qrFrame: {
-    width: 230, height: 230,
-    position: 'relative',
+  backButton: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
+  topTitle: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  scanArea: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  frame: {
+    width: 250, height: 250, borderRadius: 24,
     alignItems: 'center', justifyContent: 'center',
-    overflow: 'hidden',
   },
-
-  corner: {
-    position: 'absolute',
-    width: 36, height: 36,
-    borderColor: '#4EEABC',
-  },
-  cornerTL: { top: 0, left: 0, borderTopWidth: 4, borderLeftWidth: 4, borderTopLeftRadius: 6 },
-  cornerTR: { top: 0, right: 0, borderTopWidth: 4, borderRightWidth: 4, borderTopRightRadius: 6 },
-  cornerBL: { bottom: 0, left: 0, borderBottomWidth: 4, borderLeftWidth: 4, borderBottomLeftRadius: 6 },
-  cornerBR: { bottom: 0, right: 0, borderBottomWidth: 4, borderRightWidth: 4, borderBottomRightRadius: 6 },
-
-  scanLine: {
-    width: '100%', height: 2,
-    backgroundColor: '#4EEABC',
-    shadowColor: '#4EEABC',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.9,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-
-  /* bottom */
-  bottom: {
-    backgroundColor: '#111', paddingBottom: 40,
-    paddingTop: 28, alignItems: 'center', paddingHorizontal: 30,
-  },
-  hint: { color: '#aaa', fontSize: 13, textAlign: 'center', marginBottom: 24, lineHeight: 20 },
-  codeBtn: {
-    flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#6C3CE1',
-    paddingHorizontal: 28, paddingVertical: 14,
-    borderRadius: 30, elevation: 4,
-    shadowColor: '#6C3CE1', shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4, shadowRadius: 8,
-  },
-  codeBtnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
+  corner: { position: 'absolute', width: 38, height: 38, borderColor: '#6AE0B2' },
+  topLeft: { top: 0, left: 0, borderTopWidth: 4, borderLeftWidth: 4, borderTopLeftRadius: 12 },
+  topRight: { top: 0, right: 0, borderTopWidth: 4, borderRightWidth: 4, borderTopRightRadius: 12 },
+  bottomLeft: { bottom: 0, left: 0, borderBottomWidth: 4, borderLeftWidth: 4, borderBottomLeftRadius: 12 },
+  bottomRight: { bottom: 0, right: 0, borderBottomWidth: 4, borderRightWidth: 4, borderBottomRightRadius: 12 },
+  hint: { color: '#fff', fontSize: 13, marginTop: 23 },
+  error: { color: '#fff', fontSize: 12, backgroundColor: '#9E3448', padding: 9, borderRadius: 8, marginTop: 13 },
+  bottomNote: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: 'rgba(16,12,22,0.72)', paddingHorizontal: 20, paddingVertical: 18 },
+  bottomNoteText: { color: '#E4D6FF', fontSize: 11, lineHeight: 16, flex: 1 },
+  permissionState: { flex: 1, backgroundColor: '#F7F5FA', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 28 },
+  permissionIcon: { width: 68, height: 68, borderRadius: 21, backgroundColor: '#EEE7FA', alignItems: 'center', justifyContent: 'center' },
+  permissionTitle: { color: '#26212F', fontSize: 20, fontWeight: '700', marginTop: 18 },
+  permissionText: { color: '#756F7E', fontSize: 13, textAlign: 'center', lineHeight: 19, marginTop: 8 },
+  permissionButton: { backgroundColor: '#5F14CC', borderRadius: 13, paddingHorizontal: 24, paddingVertical: 14, marginTop: 20 },
+  permissionButtonText: { color: '#fff', fontWeight: '700', fontSize: 14 },
 });

@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 const colorsApp = {
   purple:      '#5B2D8E',
@@ -23,11 +23,12 @@ export const statisticsStoreStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingTop: 52,
+    paddingTop: 18,
     paddingBottom: 10,
     backgroundColor: colorsApp.bg,
   },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: colorsApp.purple },
+  headerBackButton: { width: 40, height: 40, alignItems: 'flex-start', justifyContent: 'center' },
+  headerTitle: { flex: 1, fontSize: 16, fontWeight: '700', color: colorsApp.purple },
  
   scroll: { paddingHorizontal: 16, paddingTop: 8 },
  

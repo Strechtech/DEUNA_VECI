@@ -36,7 +36,13 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Permitir que Mi Veci escanee el QR del comercio para registrar tu pago."
+        }
+      ]
     ]
   }
 }
