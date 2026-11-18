@@ -89,13 +89,6 @@ npx expo start --tunnel
 ```
 
 Para Expo Go, utiliza una versión compatible con el SDK del proyecto y escanea el código QR de Expo. Para Android, también puedes usar un emulador configurado en Android Studio.
-
-## APK de demostración
-
-[Descargar APK](https://expo.dev/artifacts/eas/uBcfWAtRDJR5zYdFyxufru.apk)
-
-La aplicación de demostración no requiere ingresar datos ni conceder permisos hasta que se utiliza una función que los necesita, como el escáner de cámara.
-
 ## Uso responsable
 
 - Las compras, los saldos, los QR y las recompensas actuales son de demostración; no hay cargos reales.
